@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/docker/docker/api/types/mount"
 	"strings"
 	"time"
 
@@ -95,7 +96,7 @@ func jobTemplateToHostConfig(jt drmaa2interface.JobTemplate) (*container.HostCon
 	//hc.CpusetMems
 	//hc.Ulimits
 	for outer, inner := range jt.StageInFiles {
-		hc.Binds = append(hc.Binds, fmt.Sprintf("%s:%s", outer, inner))
+		hc.Mounts = append(hc.Mounts, mount.Mount{Type: mount.TypeVolume, Source: outer, Target: inner, ReadOnly: false})
 	}
 	if jt.ExtensionList != nil {
 		restart, exists := jt.ExtensionList["restart"]
