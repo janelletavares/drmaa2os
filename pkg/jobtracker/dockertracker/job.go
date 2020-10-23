@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/context"
 	"io"
 	"os"
+	"time"
 )
 
 func runJob(jobsession string, cli *client.Client, jt drmaa2interface.JobTemplate) (string, error) {
@@ -27,6 +28,7 @@ func runJob(jobsession string, cli *client.Client, jt drmaa2interface.JobTemplat
 	if err != nil {
 		return "", fmt.Errorf("Docker Host Config: %s", err.Error())
 	}
+	fmt.Printf("HostConfig: %+v\n", hostConfig)
 
 	networkingConfig, err := jobTemplateToNetworkingConfig(jt)
 	if err != nil {
@@ -43,6 +45,8 @@ func runJob(jobsession string, cli *client.Client, jt drmaa2interface.JobTemplat
 		hostConfig,
 		networkingConfig,
 		jt.JobName)
+	fmt.Printf("Created container %s\n", ccBody.ID)
+	time.Sleep(1 * time.Minute)
 
 	if err != nil {
 		return "", fmt.Errorf("creating container: %s", err.Error())
